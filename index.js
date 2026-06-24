@@ -1,4 +1,6 @@
 require('dotenv').config();
+const fs = require('fs');
+const path = require('path');
 const express = require('express');
 const mongoose = require('mongoose');
 const Match = require('./models/Match');
@@ -25,7 +27,12 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
-app.use(express.static('public'));
+const publicPath = path.join(__dirname, 'public');
+console.log('public dir exists:', fs.existsSync(publicPath), 'publicPath=', publicPath);
+app.use(express.static(publicPath));
+
+console.log('MONGODB_URI present:', !!process.env.MONGODB_URI);
+console.log('PORT:', PORT);
 
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('📡 Conectado ao MongoDB Atlas com sucesso!'))
