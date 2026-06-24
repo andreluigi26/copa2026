@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador Copa do Mundo 2026</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="world-cup-header">
+            <h1>🏆 Simulador Copa do Mundo 2026</h1>
+            <p>Gerencie e atualize os resultados das partidas</p>
+        </header>
+        <main>
+            <section class="group-selector">
+                <label for="group-select">Selecione o grupo:</label>
+                <select id="group-select">
+                    <option value="A">Grupo A</option>
+                    <option value="B">Grupo B</option>
+                    <option value="C">Grupo C</option>
+                    <option value="D">Grupo D</option>
+                    <option value="E">Grupo E</option>
+                    <option value="F">Grupo F</option>
+                    <option value="G">Grupo G</option>
+                    <option value="H">Grupo H</option>
+                    <option value="I">Grupo I</option>
+                    <option value="J">Grupo J</option>
+                    <option value="K">Grupo K</option>
+                    <option value="L">Grupo L</option>
+                </select>
+            </section>
+            <section class="match-section">
+                <h2>Partidas</h2>
+                <div id="matches-container" class="matches-container">
+                    <p class="loading">Carregando partidas...</p>
+                </div>
+            </section>
+            <section class="standings-section">
+                <h2>Classificação</h2>
+                <div id="standings-container" class="standings-container">
+                    <p class="loading">Carregando classificação...</p>
+                </div>
+            </section>
+            <section class="match-section">
+                <h2>Mata-mata</h2>
+                <div class="knockout-actions" style="display:flex;flex-wrap:wrap;gap:1rem;align-items:center;margin-bottom:1rem;">
+                  <button id="generate-knockout-btn" class="btn-save">Gerar R32</button>
+                  <div class="phase-selector">
+                    <label for="stage-select">Ver etapa:</label>
+                    <select id="stage-select">
+                      <option value="R32">R32</option>
+                      <option value="R16">R16</option>
+                      <option value="QF">QF</option>
+                      <option value="SF">SF</option>
+                      <option value="Final">Final</option>
+                    </select>
+                  </div>
+                  <span style="color:var(--text-muted);font-size:0.95rem;">Selecione a fase para visualizar o mata-mata.</span>
+                </div>
+                <div id="knockout-container" class="matches-container">
+                    <p class="loading">Carregando chaveamento...</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src ="app.js"></script>
+    
+</body>
+</html>
