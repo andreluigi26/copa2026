@@ -16,12 +16,25 @@ document.addEventListener('DOMContentLoaded', () => {
         fetch(`/api/standings?group=${group}`)
       ]);
 
+      if (!matchesRes.ok || !standingsRes.ok) {
+        const message = `Erro de API: matches=${matchesRes.status} standings=${standingsRes.status}`;
+        throw new Error(message);
+      }
+
       const [matches, standings] = await Promise.all([matchesRes.json(), standingsRes.json()]);
+
+      if (!Array.isArray(matches)) {
+        throw new Error('Resposta de /api/matches não é lista');
+      }
 
       if (matches.length === 0) {
         matchesContainer.innerHTML = '<p>Nenhum jogo encontrado para este grupo.</p>';
       } else {
         renderMatches(matches);
+      }
+
+      if (!Array.isArray(standings)) {
+        throw new Error('Resposta de /api/standings não é lista');
       }
 
       if (standings.length === 0) {

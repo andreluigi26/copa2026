@@ -36,14 +36,34 @@ console.log('PORT:', PORT);
 
 mongoose.set('bufferCommands', false);
 
-mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  serverSelectionTimeoutMS: 10000,
-  socketTimeoutMS: 45000
-})
-  .then(() => console.log('📡 Conectado ao MongoDB Atlas com sucesso!'))
-  .catch((err) => console.error('❌ Erro ao conectar ao MongoDB Atlas:', err));
+const connectToDatabase = async () => {
+  if (!process.env.MONGODB_URI) {
+    throw new Error('MONGODB_URI não está definida.');
+  }
+
+  if (global.__mongoose && global.__mongoose.connection.readyState === 1) {
+    return global.__mongoose.connection;
+  }
+
+  if (global.__mongoose?.promise) {
+    return global.__mongoose.promise;
+  }
+
+  const promise = mongoose.connect(process.env.MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    serverSelectionTimeoutMS: 10000,
+    socketTimeoutMS: 45000
+  });
+
+  global.__mongoose = { connection: mongoose.connection, promise };
+
+  mongoose.connection.on('connected', () => console.log('📡 Conectado ao MongoDB Atlas com sucesso!'));
+  mongoose.connection.on('error', (err) => console.error('❌ Erro MongoDB connection:', err));
+  mongoose.connection.on('disconnected', () => console.warn('⚠️ MongoDB desconectado'));
+
+  return promise;
+};
 
 app.get('/api/matches', async (req, res) => {
   try {
@@ -52,6 +72,8 @@ app.get('/api/matches', async (req, res) => {
       return res.status(400).json({ error: 'O parâmetro "group" é obrigatório.' });
     }
 
+    await connectToDatabase();
+
     const matches = await Match.find({ group: group.toUpperCase() })
       .populate('homeTeam')
       .populate('awayTeam')
@@ -59,7 +81,7 @@ app.get('/api/matches', async (req, res) => {
 
     return res.json(matches);
   } catch (error) {
-    console.error(error);
+    console.error('Erro em /api/matches:', error);
     return res.status(500).json({ error: 'Erro ao buscar partidas.' });
   }
 });
@@ -70,6 +92,8 @@ app.get('/api/standings', async (req, res) => {
     if (!group) {
       return res.status(400).json({ error: 'O parâmetro "group" é obrigatório.' });
     }
+
+    await connectToDatabase();
 
     const matches = await Match.find({ group: group.toUpperCase() })
       .populate('homeTeam')
