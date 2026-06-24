@@ -34,7 +34,14 @@ app.use(express.static(publicPath));
 console.log('MONGODB_URI present:', !!process.env.MONGODB_URI);
 console.log('PORT:', PORT);
 
-mongoose.connect(process.env.MONGODB_URI)
+mongoose.set('bufferCommands', false);
+
+mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  serverSelectionTimeoutMS: 10000,
+  socketTimeoutMS: 45000
+})
   .then(() => console.log('📡 Conectado ao MongoDB Atlas com sucesso!'))
   .catch((err) => console.error('❌ Erro ao conectar ao MongoDB Atlas:', err));
 
